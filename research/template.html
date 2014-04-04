@@ -1,0 +1,22 @@
+<section>
+    <article>
+        <h1>{{page.title}}</h1>
+        <small class="meta">published on {{page.createdDate}}</small>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+        <p>Ipsa, est, ex, nesciunt, aliquam quia sed sequi officiis necessitatibus eum?</p>
+        <p>Fugit, nostrum, consequatur consequuntur saepe sint qui iusto corporis eaque iste quibusdam.</p>
+        <p>Provident, nulla, repellat nesciunt similique quibusdam dolor architecto delectus earum unde culpa ea minima!</p>
+    </article>
+</section>
+<!-- TODO: write template code for if and each -->
+{{#if comments}}
+<section class="comments">
+    {{#each comments}}
+    <article>
+        <h2>{{title}}</h2>
+        <small class="meta">{{username}} posted on {{createdDate}}</small>
+        <p>{{content}}</p>
+    </article>
+    {{/each}}
+</section>
+{{/if}}
