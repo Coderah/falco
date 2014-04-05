@@ -32,7 +32,7 @@ var pageTemplate = (function () {
                 return parameters.page.createdDate;
             }
         }
-    ]
+    ];
 
     function create(parameters, options) {
         if (!fragment) {
@@ -73,28 +73,30 @@ var pageTemplate = (function () {
 
         var nodes = fragment.cloneNode(true);
 
-        (function (nodes, schema) {
-            var node = nodes.childNodes[0];
-            var deserializePatterns = [];
-            for (var i = 0; i < schema.length; i++) {
-                var element = schema[i].element(nodes);
-                if (element) {
-                    // TODO: Object.create may clone deserialize functions causing memory leak (research)
-                    var pattern = Object.create(schema[i]);
-                    pattern.element = element;
-                    deserializePatterns.push(pattern);
-                }
-            }
-
-            node.update = deserialize.bind(nodes, deserializePatterns);
-            node.deserializePatterns = deserializePatterns;
-        })(nodes, deserializePatternSchema);
+        bind(nodes, deserializePatternSchema);
 
         if (parameters) {
             nodes.childNodes[0].update(parameters);
         }
 
         return nodes.childNodes[0];
+    }
+
+    function bind(nodes, schema) {
+        var node = nodes.childNodes[0];
+        var deserializePatterns = [];
+        for (var i = 0; i < schema.length; i++) {
+            var element = schema[i].element(nodes);
+            if (element) {
+                // TODO: Object.create may clone deserialize functions causing memory leak (research)
+                var pattern = Object.create(schema[i]);
+                pattern.element = element;
+                deserializePatterns.push(pattern);
+            }
+        }
+
+        node.update = deserialize.bind(nodes, deserializePatterns);
+        node.deserializePatterns = deserializePatterns;
     }
 
     function deserialize(patterns, parameters) {
