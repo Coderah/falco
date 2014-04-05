@@ -99,10 +99,3 @@ var pageTemplate = (function () {
 
     return create;
 })();
-
-document.body.appendChild(pageTemplate({
-    page: {
-        title: 'Hello World!',
-        createdDate: new Date()
-    }
-}));

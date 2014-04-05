@@ -14,5 +14,13 @@
 </head>
 <body>
     <script type="text/javascript" src="template.js"></script>
+    <script type="text/javascript">
+        document.body.appendChild(pageTemplate({
+            page: {
+                title: 'Hello World!',
+                createdDate: new Date()
+            }
+        }));
+    </script>
 </body>
 </html>
