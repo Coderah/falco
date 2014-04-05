@@ -1,0 +1,24 @@
+{
+  "name": "whiskers",
+  "version": "0.0.0",
+  "description": "Whiskers is a lightweight and speedy Handlebars replacement that understands and rapidly updates the DOM, can be bound to existing elements and when paired with requestAnimationFrame dramatically increase binding update speeds.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Coderah/whiskers.git"
+  },
+  "keywords": [
+    "mustache",
+    "handlebars",
+    "template",
+    "fast",
+    "lightweight"
+  ],
+  "author": "Alex Howard",
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "gitHead": "b51467805bd260934f8b6b88b7740afc778852c7"
+}
