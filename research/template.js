@@ -2,6 +2,15 @@ var pageTemplate = (function () {
     var fragment, schema;
 
     deserializePatternSchema = [
+        {
+            type: 'class',
+            element: function(targetEl) {
+                return targetEl.childNodes[0];
+            },
+            deserialize: function(parameters) {
+                return parameters.page.type;
+            }
+        },
         { // section > article > h1
             type: 'textContent',
             element: function(targetEl) {
@@ -30,6 +39,7 @@ var pageTemplate = (function () {
             fragment = document.createDocumentFragment();
 
             var section = document.createElement('section');
+            section.classList.add('main-section');
 
             var article = document.createElement('article');
             section.appendChild(article);
@@ -77,6 +87,7 @@ var pageTemplate = (function () {
             }
 
             node.update = deserialize.bind(nodes, deserializePatterns);
+            node.deserializePatterns = deserializePatterns;
         })(nodes, deserializePatternSchema);
 
         if (parameters) {
@@ -90,8 +101,23 @@ var pageTemplate = (function () {
         for (var i = 0; i < patterns.length; i++) {
             var pattern = patterns[i];
             switch (pattern.type) {
+                case 'class':
+                    var className = pattern.deserialize(parameters),
+                        classList = pattern.element.classList;
+
+                    if (pattern.value && classList.contains(pattern.value)) {
+                        classList.remove(pattern.value);
+                    }
+
+                    if (!classList.contains(className)) {
+                        classList.add(className);
+                    }
+
+                    pattern.value = className;
+
+                    break;
                 case 'textContent':
-                    pattern.element[pattern.type] = pattern.deserialize(parameters);
+                    pattern.value = pattern.element.textContent = pattern.deserialize(parameters) || pattern.value;
                     break;
             }
         }
