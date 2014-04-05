@@ -1,4 +1,4 @@
-(function () {
+var pageTemplate = (function () {
     var fragment, schema;
 
     deserializePatternSchema = [
@@ -97,10 +97,12 @@
         }
     }
 
-    document.body.appendChild(create({
-        page: {
-            title: 'Hello World!',
-            createdDate: new Date()
-        }
-    }));
-})(); 
+    return create;
+})();
+
+document.body.appendChild(pageTemplate({
+    page: {
+        title: 'Hello World!',
+        createdDate: new Date()
+    }
+}));
