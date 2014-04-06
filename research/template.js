@@ -119,7 +119,10 @@ var pageTemplate = (function () {
 
                     break;
                 case 'textContent':
-                    pattern.value = pattern.element.textContent = pattern.deserialize(parameters) || pattern.value;
+                    var value = pattern.deserialize(parameters);
+                    if (value) {
+                        pattern.element.textContent = pattern.deserialize(parameters);
+                    }
                     break;
             }
         }
