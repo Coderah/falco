@@ -1,38 +1,31 @@
 var pageTemplate = (function () {
     var fragment, schema;
 
-    deserializePatternSchema = [
-        {
-            type: 'class',
-            element: function(targetEl) {
-                return targetEl.childNodes[0];
-            },
-            deserialize: function(parameters) {
-                return parameters.page.type;
-            }
-        },
-        { // section > article > h1
-            type: 'textContent',
-            element: function(targetEl) {
-                return targetEl.querySelector('article>h1');
-            },
-            deserialize: function(parameters) {
-                return parameters.page.title;
-            }
-        },
-        { // section > article > small.meta
-            type: 'textContent',
-            element: function(targetEl) {
-                var el = targetEl.querySelector('article>small');
-                if (el) return el.childNodes[1];
+    deserializePatternSchema = {
+        page: {
+            createdDate: { // section > article > small.meta
+                type: 'textContent',
+                element: function(targetEl) {
+                    var el = targetEl.querySelector('article>small');
+                    if (el) return el.childNodes[1];
 
-                return false;
+                    return false;
+                }
             },
-            deserialize: function(parameters) {
-                return parameters.page.createdDate;
+            title: { // section > article > h1
+                type: 'textContent',
+                element: function(targetEl) {
+                    return targetEl.querySelector('article>h1');
+                }
+            },
+            type: {
+                type: 'class',
+                element: function(targetEl) {
+                    return targetEl.childNodes[0];
+                }
             }
         }
-    ];
+    };
 
     function create(parameters, options) {
         if (!fragment) {
@@ -84,48 +77,60 @@ var pageTemplate = (function () {
 
     function bind(nodes, schema) {
         var node = nodes.childNodes[0];
-        var deserializePatterns = [];
-        for (var i = 0; i < schema.length; i++) {
-            var element = schema[i].element(nodes);
-            if (element) {
-                // TODO: Object.create may clone deserialize functions causing memory leak (research)
-                var pattern = Object.create(schema[i]);
-                pattern.element = element;
-                deserializePatterns.push(pattern);
+        var deserializePatterns = {};
+
+        function createPattern(schema, patterns) {
+            for (var i in schema) {
+                if (schema[i].hasOwnProperty('element') && schema[i].element instanceof Function) {
+                    var element = schema[i].element(nodes);
+                    if (element) {
+                        var pattern = Object.create(schema[i]);
+                        pattern.element = element;
+                        patterns[i] = pattern;
+                    }
+                } else {
+                    createPattern(schema[i], patterns[i] = {});
+                }
             }
         }
 
+        createPattern(schema, deserializePatterns);
+
         node.update = deserialize.bind(nodes, deserializePatterns);
-        node.deserializePatterns = deserializePatterns;
     }
 
     function deserialize(patterns, parameters) {
-        for (var i = 0; i < patterns.length; i++) {
+        for (var i in parameters) {
             var pattern = patterns[i];
-            switch (pattern.type) {
-                case 'class':
-                    var className = pattern.deserialize(parameters),
-                        classList = pattern.element.classList;
+            if (pattern && pattern.hasOwnProperty('element') && pattern.element.nodeType) {
+                var parameter = parameters[i];
+                switch (pattern.type) {
+                    case 'class':
+                        var className = parameter,
+                            classList = pattern.element.classList;
 
-                    if (pattern.value && classList.contains(pattern.value)) {
-                        classList.remove(pattern.value);
-                    }
+                        if (pattern.value && classList.contains(pattern.value)) {
+                            classList.remove(pattern.value);
+                        }
 
-                    if (!classList.contains(className)) {
-                        classList.add(className);
-                    }
+                        if (!classList.contains(className)) {
+                            classList.add(className);
+                        }
 
-                    pattern.value = className;
+                        pattern.value = className;
 
-                    break;
-                case 'textContent':
-                    var value = pattern.deserialize(parameters);
-                    if (value) {
-                        pattern.element.textContent = pattern.deserialize(parameters);
-                    }
-                    break;
+                        break;
+                    case 'textContent':
+                        var value = parameter;
+                        if (value) {
+                            pattern.element.textContent = parameter;
+                        }
+                        break;
+                }
+            } else if (patterns.hasOwnProperty(i)) {
+                deserialize(patterns[i], parameters[i]);
             }
-        }
+        };
     }
 
     return create;
