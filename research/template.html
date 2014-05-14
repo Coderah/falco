@@ -9,7 +9,6 @@
     </article>
 </section>
 <!-- TODO: write template code for if and each -->
-{{#if comments}}
 <section class="comments">
     {{#each comments}}
     <article>
@@ -17,6 +16,9 @@
         <small class="meta">{{username}} posted on {{createdDate}}</small>
         <p>{{content}}</p>
     </article>
+    {{else}}
+    <article class="message">
+        <p>Be the first to comment</p>
+    </article>
     {{/each}}
 </section>
-{{/if}}
