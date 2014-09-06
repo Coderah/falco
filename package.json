@@ -20,5 +20,9 @@
   "author": "Alex Howard",
   "license": "BSD",
   "readmeFilename": "README.md",
-  "gitHead": "b51467805bd260934f8b6b88b7740afc778852c7"
+  "gitHead": "b51467805bd260934f8b6b88b7740afc778852c7",
+  "devDependencies": {
+    "colors": "^0.6.2",
+    "lex": "^1.7.6"
+  }
 }
