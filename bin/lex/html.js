@@ -41,7 +41,7 @@ module.exports = function(l) {
                 return { type: 'text', value: match };
             }
         }
-    }, ['inElement']);
+    }, ['inWhiskersBlock', 'inElement']);
 
     // closing tag
     l.addRule(/(?:\/>)|(?:<\/(\w+)>)/, function(match, tagName) {
