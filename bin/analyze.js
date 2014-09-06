@@ -29,9 +29,6 @@ l.setState = function(newState) {
     this.state = newState;
 }
 
-l.storeState = function() {
-}
-
 l.popState = function(count) {
     if (count && typeof count === 'number') {
         this.previousStates = this.previousStates.slice(0, this.previousStates.length - count + 1);
@@ -43,8 +40,8 @@ l.popState = function(count) {
 // setup html rules
 require('./lex/html.js')(l);
 
-// setup mustache rules
-require('./lex/handlebars.js');
+// setup handlebars rules
+require('./lex/handlebars.js')(l);
 
 l.addRule(/$/, function () {
     return "EOF";
