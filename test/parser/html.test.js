@@ -19,7 +19,7 @@ function expectCloseTag(token, tagName) { expectToken(token, 'closeTag', tagName
 
 describe('html tokenization', function() {
     describe('element', function() {
-        it('handles self-closing tag', function() {
+        it('self-closing', function() {
             var tokens = lex('<br />');
 
             var openToken = tokens[0];
@@ -29,7 +29,7 @@ describe('html tokenization', function() {
             expectCloseTag(closeToken, 'br');
         });
 
-        it('handles opening and closing', function() {
+        it('opening and closing', function() {
             var tokens = lex('<p></p>');
             expect(tokens).to.have.length(3);
 
@@ -42,7 +42,7 @@ describe('html tokenization', function() {
             expectCloseTag(closeToken, 'p');
         });
 
-        it('handles content', function() {
+        it('content', function() {
             var text = 'lorem ipsum dolor sit amet';
             var tokens = lex('<p>' + text + '</p>');
 
@@ -53,7 +53,7 @@ describe('html tokenization', function() {
         });
 
         describe('nested', function() {
-            it('one-level deep', function() {
+            it('one-level', function() {
                 var nestedTagName = 'article';
                 var tokens = lex('<section><' + nestedTagName + '></' + nestedTagName + '></section>');
 
@@ -69,7 +69,7 @@ describe('html tokenization', function() {
         });
 
         describe('attribute', function() {
-            it('handles empty', function() {
+            it('empty', function() {
                 var tokens = lex('<input readonly />');
 
                 var attributeToken = tokens[1];
@@ -79,7 +79,7 @@ describe('html tokenization', function() {
                 expect(attributeToken).to.not.have.property('value');
             });
 
-            it('handles valued', function() {
+            it('valued', function() {
                 var tokens = lex('<a href="/home">whiskers</a>');
 
                 var attributeToken = tokens[1];
