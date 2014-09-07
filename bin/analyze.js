@@ -43,10 +43,6 @@ require('./lex/html.js')(l);
 // setup handlebars rules
 require('./lex/handlebars.js')(l);
 
-l.addRule(/$/, function () {
-    return "EOF";
-});
-
 module.exports = function(string) {
     l.setInput(string);
 
