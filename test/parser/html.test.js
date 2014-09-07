@@ -19,6 +19,16 @@ function expectCloseTag(token, tagName) { expectToken(token, 'closeTag', tagName
 
 describe('html tokenization', function() {
     describe('element', function() {
+        it('handles self-closing tag', function() {
+            var tokens = lex('<br />');
+
+            var openToken = tokens[0];
+            var closeToken = tokens[1];
+
+            expectOpenTag(openToken, 'br');
+            expectCloseTag(closeToken, 'br');
+        });
+
         it('handles opening and closing', function() {
             var tokens = lex('<p></p>');
             expect(tokens).to.have.length(3);
