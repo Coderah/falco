@@ -2,13 +2,17 @@ module.exports = function(l) {
     //// HANDLEBARS RULES ////
 
     // whisker expression
-    l.addRule(/(\{{2,3})(this\/|\.?\.\/|@|#)?([\w\-]+\s)??([\w\.]+)(\}{2,3})/,
-        function(match, opening, modifier, modifierName, expression, closing) {
+    l.addRule(/(\{{2,3})(@|#)?([\w\-]+\s)?([\S]+?(?:\/|\.))?([\w]+)(\}{2,3})/,
+        function(match, opening, modifier, modifierName, context, expression, closing) {
             var details = { expression: expression };
 
             if (modifier) {
                 details.modifier = modifier;
                 if (modifierName) details.modifierName = modifierName;
+            }
+
+            if (context) {
+                details.context = context.substr(0, context.length - 1);
             }
 
             if (opening.length !== closing.length) {
