@@ -47,15 +47,16 @@ l.addRule(/$/, function () {
     return "EOF";
 });
 
-var fs = require('fs');
-l.setInput(fs.readFileSync('../research/template.html').toString());
+module.exports = function(string) {
+    l.setInput(string);
 
-var result;
-l.tokens = [];
+    var result;
+    l.tokens = [];
 
-do {
-    var result = l.lex();
-    if (result) l.tokens.push(result);
-} while (result !== undefined && result !== 'EOF')
-
-console.log(l.tokens);
+    do {
+        var result = l.lex();
+        if (result) l.tokens.push(result);
+    } while (result !== undefined && result !== 'EOF')
+    
+    return l.tokens;
+}
