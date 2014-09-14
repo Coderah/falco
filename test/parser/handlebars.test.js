@@ -1,6 +1,6 @@
 var _ = require('lodash');
 var expect = require('expect.js');
-var lex = require('../../lib/parser.js');
+var Parser = require('../../lib/parser.js');
 
 function expectToken(token, type) {
     expect(token).to.be.a(Object);
@@ -12,25 +12,88 @@ function expectToken(token, type) {
 function expectExpression(token, details, type) {
     expectToken(token, type || 'whiskersExpression');
 
-    expect(token).to.have.property('expression');
-    expect(token.expression).to.equal(expression);
-
     if (details instanceof Object) {
         _.each(details, function(value, key) {
-            if (_.indexOf(detailsKeys, key) > -1) {
-                expect(token).to.have.property(key);
-                expect(token[key]).to.have(value);
+            expect(token).to.have.property(key);
+
+            if (key === 'arguments') {
+                expect(token.arguments).to.have.length(value.length);
+
+                _.each(value, function(arg, index) {
+                    var tokenArg = token.arguments[index];
+
+                    if (arg.context) {
+                        expect(tokenArg).to.have.property('context');
+                        expect(tokenArg.context).to.equal(arg.context);
+                    }
+
+                    if (arg.value) {
+                        expect(tokenArg).to.have.property('value');
+                        expect(tokenArg.value).to.equal(arg.value);
+                    }
+                });
+            } else {
+                expect(token[key]).to.be(value);
             }
+        });
+    }
+}
+
+function testExpression(expression, details) {
+    return function expressionTester(done) {
+        Parser(expression, function(tokens) {
+            expectExpression(tokens[0], details);
+
+            done();
         });
     }
 }
 
 describe('whiskers tokenization', function() {
     describe('expression', function() {
-        // TODO: single argument
-        // TODO: escaping
-        // TODO: scoping
-        // TODO: multiple arguments
+        it('single argument', testExpression('{{test}}', 
+            {
+                arguments: [
+                    { value: 'test' }
+                ]
+            }
+        ));
+
+        it('escaping', testExpression('{{{test}}}', 
+            {
+                escaping: true,
+                arguments: [
+                    { value: 'test' }
+                ]
+            }
+        ));
+
+        it('helper', testExpression('{{foo bar}}', 
+            {
+                helperName: 'foo',
+                arguments: [
+                    { value: 'bar' }
+                ]
+            }
+        ));
+
+        it('multiple arguments', testExpression('{{foo bar test}}', 
+            {
+                arguments: [
+                    { value: 'bar' },
+                    { value: 'test' }
+                ]
+            }
+        ));
+
+        it('arguments with context', testExpression('{{bar this.test ../foo}}', 
+            {
+                arguments: [
+                    { context: 'this', value: 'test' },
+                    { context: '..', value: 'foo' }
+                ]
+            }
+        ));
     });
 
     describe('block', function() {
