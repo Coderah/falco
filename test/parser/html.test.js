@@ -1,22 +1,6 @@
 var expect = require('expect.js');
 var Parser = require('../../lib/parser.js');
 
-function expectToken(token, type, name) {
-    expect(token).to.be.a(Object);
-
-    expect(token).to.have.property('type');
-    expect(token.type).to.equal(type);
-
-    if (name) {
-        expect(token).to.have.property('name');
-        expect(token.name).to.equal(name);
-    }
-}
-
-function expectOpenTag(token, tagName) { expectToken(token, 'openTag', tagName); }
-function expectCloseTag(token, tagName) { expectToken(token, 'closeTag', tagName); }
-
-
 describe('html tokenization', function() {
     describe('element', function() {
         it('self-closing', function(done) {
@@ -104,3 +88,18 @@ describe('html tokenization', function() {
         });
     });
 });
+
+function expectToken(token, type, name) {
+    expect(token).to.be.a(Object);
+
+    expect(token).to.have.property('type');
+    expect(token.type).to.equal(type);
+
+    if (name) {
+        expect(token).to.have.property('name');
+        expect(token.name).to.equal(name);
+    }
+}
+
+function expectOpenTag(token, tagName) { expectToken(token, 'openTag', tagName); }
+function expectCloseTag(token, tagName) { expectToken(token, 'closeTag', tagName); }

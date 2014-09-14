@@ -2,53 +2,6 @@ var _ = require('lodash');
 var expect = require('expect.js');
 var Parser = require('../../lib/parser.js');
 
-function expectToken(token, type) {
-    expect(token).to.be.a(Object);
-
-    expect(token).to.have.property('type');
-    expect(token.type).to.equal(type);
-}
-
-function expectExpression(token, details, type) {
-    expectToken(token, type || 'whiskersExpression');
-
-    if (details instanceof Object) {
-        _.each(details, function(value, key) {
-            expect(token).to.have.property(key);
-
-            if (key === 'arguments') {
-                expect(token.arguments).to.have.length(value.length);
-
-                _.each(value, function(arg, index) {
-                    var tokenArg = token.arguments[index];
-
-                    if (arg.context) {
-                        expect(tokenArg).to.have.property('context');
-                        expect(tokenArg.context).to.equal(arg.context);
-                    }
-
-                    if (arg.value) {
-                        expect(tokenArg).to.have.property('value');
-                        expect(tokenArg.value).to.equal(arg.value);
-                    }
-                });
-            } else {
-                expect(token[key]).to.be(value);
-            }
-        });
-    }
-}
-
-function testExpression(expression, details) {
-    return function expressionTester(done) {
-        Parser(expression, function(tokens) {
-            expectExpression(tokens[0], details);
-
-            done();
-        });
-    }
-}
-
 describe('whiskers tokenization', function() {
     describe('expression', function() {
         it('single argument', testExpression('{{test}}', 
@@ -103,3 +56,50 @@ describe('whiskers tokenization', function() {
         // TODO: raw
     });
 });
+
+function expectToken(token, type) {
+    expect(token).to.be.a(Object);
+
+    expect(token).to.have.property('type');
+    expect(token.type).to.equal(type);
+}
+
+function expectExpression(token, details, type) {
+    expectToken(token, type || 'whiskersExpression');
+
+    if (details instanceof Object) {
+        _.each(details, function(value, key) {
+            expect(token).to.have.property(key);
+
+            if (key === 'arguments') {
+                expect(token.arguments).to.have.length(value.length);
+
+                _.each(value, function(arg, index) {
+                    var tokenArg = token.arguments[index];
+
+                    if (arg.context) {
+                        expect(tokenArg).to.have.property('context');
+                        expect(tokenArg.context).to.equal(arg.context);
+                    }
+
+                    if (arg.value) {
+                        expect(tokenArg).to.have.property('value');
+                        expect(tokenArg.value).to.equal(arg.value);
+                    }
+                });
+            } else {
+                expect(token[key]).to.be(value);
+            }
+        });
+    }
+}
+
+function testExpression(expression, details) {
+    return function expressionTester(done) {
+        Parser(expression, function(tokens) {
+            expectExpression(tokens[0], details);
+
+            done();
+        });
+    }
+}
