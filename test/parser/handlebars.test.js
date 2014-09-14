@@ -50,10 +50,70 @@ describe('whiskers tokenization', function() {
     });
 
     describe('block', function() {
-        // TODO: expression
-        // TODO: private variables
-        // TODO: else statement
-        // TODO: raw
+        it('simple block', testExpression('{{#each}}{{/each}}', 
+            [
+                {
+                    type: 'openWhiskersBlock',
+                    helperName: 'each'
+                },
+                {
+                    type: 'endWhiskersBlock',
+                    helperName: 'each'
+                }
+            ]
+        ));
+
+        it('inner expression', testExpression('{{#each}}{{foo.bar}}{{/each}}', 
+            [
+                {
+                    type: 'openWhiskersBlock',
+                    helperName: 'each'
+                },
+                {
+                    arguments: [
+                        { context: 'foo', value: 'bar' }
+                    ]
+                },
+                {
+                    type: 'endWhiskersBlock',
+                    helperName: 'each'
+                }
+            ]
+        ));
+
+        it('else block', testExpression('{{#each}}{{else}}{{/each}}', 
+            [
+                {
+                    type: 'openWhiskersBlock',
+                    helperName: 'each'
+                },
+                {
+                    type: 'whiskersBlockElse'
+                },
+                {
+                    type: 'endWhiskersBlock',
+                    helperName: 'each'
+                }
+            ]
+        ));
+
+        it('handle loop variables', testExpression('{{#each}}{{@index}}{{/each}}', 
+            [
+                {
+                    type: 'openWhiskersBlock',
+                    helperName: 'each'
+                },
+                {
+                    arguments: [
+                        { value: '@index' }
+                    ]
+                },
+                {
+                    type: 'endWhiskersBlock',
+                    helperName: 'each'
+                }
+            ]
+        ));
     });
 });
 
@@ -97,7 +157,17 @@ function expectExpression(token, details, type) {
 function testExpression(expression, details) {
     return function expressionTester(done) {
         Parser(expression, function(tokens) {
-            expectExpression(tokens[0], details);
+            if (details instanceof Array) {
+                expect(tokens.length).to.be.above(details.length - 1);
+
+                _.each(details, function(tokenDetails, index) {
+                    var token = tokens[index];
+
+                    expectExpression(token, tokenDetails, tokenDetails.type);
+                });
+            } else {
+                expectExpression(tokens[0], details);
+            }
 
             done();
         });
