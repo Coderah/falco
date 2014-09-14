@@ -1,10 +1,8 @@
-var _ = require('lodash');
-var expect = require('expect.js');
-var Parser = require('../../lib/parser.js');
+var utils = require('./utilities.js');
 
 describe('whiskers tokenization', function() {
     describe('expression', function() {
-        it('single argument', testExpression('{{test}}', 
+        it('single argument', utils.testExpression('{{test}}', 
             {
                 arguments: [
                     { value: 'test' }
@@ -12,7 +10,7 @@ describe('whiskers tokenization', function() {
             }
         ));
 
-        it('escaping', testExpression('{{{test}}}', 
+        it('escaping', utils.testExpression('{{{test}}}', 
             {
                 escaping: true,
                 arguments: [
@@ -21,7 +19,7 @@ describe('whiskers tokenization', function() {
             }
         ));
 
-        it('helper', testExpression('{{foo bar}}', 
+        it('helper', utils.testExpression('{{foo bar}}', 
             {
                 helperName: 'foo',
                 arguments: [
@@ -30,7 +28,7 @@ describe('whiskers tokenization', function() {
             }
         ));
 
-        it('multiple arguments', testExpression('{{foo bar test}}', 
+        it('multiple arguments', utils.testExpression('{{foo bar test}}', 
             {
                 arguments: [
                     { value: 'bar' },
@@ -39,7 +37,7 @@ describe('whiskers tokenization', function() {
             }
         ));
 
-        it('arguments with context', testExpression('{{bar this.test ../foo}}', 
+        it('arguments with context', utils.testExpression('{{bar this.test ../foo}}', 
             {
                 arguments: [
                     { context: 'this', value: 'test' },
@@ -50,7 +48,7 @@ describe('whiskers tokenization', function() {
     });
 
     describe('block', function() {
-        it('simple block', testExpression('{{#each}}{{/each}}', 
+        it('simple block', utils.testExpression('{{#each}}{{/each}}', 
             [
                 {
                     type: 'openWhiskersBlock',
@@ -63,7 +61,7 @@ describe('whiskers tokenization', function() {
             ]
         ));
 
-        it('inner expression', testExpression('{{#each}}{{foo.bar}}{{/each}}', 
+        it('inner expression', utils.testExpression('{{#each}}{{foo.bar}}{{/each}}', 
             [
                 {
                     type: 'openWhiskersBlock',
@@ -81,7 +79,7 @@ describe('whiskers tokenization', function() {
             ]
         ));
 
-        it('else block', testExpression('{{#each}}{{else}}{{/each}}', 
+        it('else block', utils.testExpression('{{#each}}{{else}}{{/each}}', 
             [
                 {
                     type: 'openWhiskersBlock',
@@ -97,7 +95,7 @@ describe('whiskers tokenization', function() {
             ]
         ));
 
-        it('handle loop variables', testExpression('{{#each}}{{@index}}{{/each}}', 
+        it('handle loop variables', utils.testExpression('{{#each}}{{@index}}{{/each}}', 
             [
                 {
                     type: 'openWhiskersBlock',
@@ -116,60 +114,3 @@ describe('whiskers tokenization', function() {
         ));
     });
 });
-
-function expectToken(token, type) {
-    expect(token).to.be.a(Object);
-
-    expect(token).to.have.property('type');
-    expect(token.type).to.equal(type);
-}
-
-function expectExpression(token, details, type) {
-    expectToken(token, type || 'whiskersExpression');
-
-    if (details instanceof Object) {
-        _.each(details, function(value, key) {
-            expect(token).to.have.property(key);
-
-            if (key === 'arguments') {
-                expect(token.arguments).to.have.length(value.length);
-
-                _.each(value, function(arg, index) {
-                    var tokenArg = token.arguments[index];
-
-                    if (arg.context) {
-                        expect(tokenArg).to.have.property('context');
-                        expect(tokenArg.context).to.equal(arg.context);
-                    }
-
-                    if (arg.value) {
-                        expect(tokenArg).to.have.property('value');
-                        expect(tokenArg.value).to.equal(arg.value);
-                    }
-                });
-            } else {
-                expect(token[key]).to.be(value);
-            }
-        });
-    }
-}
-
-function testExpression(expression, details) {
-    return function expressionTester(done) {
-        Parser(expression, function(tokens) {
-            if (details instanceof Array) {
-                expect(tokens.length).to.be.above(details.length - 1);
-
-                _.each(details, function(tokenDetails, index) {
-                    var token = tokens[index];
-
-                    expectExpression(token, tokenDetails, tokenDetails.type);
-                });
-            } else {
-                expectExpression(tokens[0], details);
-            }
-
-            done();
-        });
-    }
-}
