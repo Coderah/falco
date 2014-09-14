@@ -5,13 +5,16 @@ cli.setUsage('whiskers FILE [OPTIONS]');
 
 cli.parse({
     out: ['o', 'output file path', 'path'],
-    tokenOut: ['O', 'output for json file of tokens', 'path']
+    tokenOut: ['O', 'output for json file of tokens', 'path'],
+    debug: [undefined, 'output debug info to console']
 });
 
 var fs = require('fs');
 
 var args = cli.args;
 var options = cli.options;
+
+console.log(args, options);
 
 if (args.length === 1) {
     var inputFile = args[0];
@@ -31,12 +34,17 @@ if (args.length === 1) {
     cli.getUsage();
 }
 
+var utils = require('util');
 function main(path) {
     var contents = fs.readFileSync(path).toString();
 
     cli.spinner('Parsing...');
     Parser(contents, function(tokens) {
         cli.spinner('Parsing... Done\n', true);
+
+        if (options.debug) {
+            console.log(utils.inspect(tokens, {depth: 5}));
+        }
 
         if (options.tokenOut) {
             fs.writeFileSync(options.tokenOut, JSON.stringify(tokens));
