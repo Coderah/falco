@@ -3,33 +3,18 @@ var _ = require('lodash');
 var parser = require('../../lib/parser.js');
 var utils = {};
 
-utils.expectToken = function(token, type, name) {
+utils.expectToken = function(token, details) {
     expect(token).to.be.an(Object);
-
-    expect(token).to.have.property('type');
-    expect(token.type).to.equal(type);
-
-    if (name) {
-        expect(token).to.have.property('name');
-        expect(token.name).to.equal(name);
-    }
-};
-
-utils.expectOpenTag = function(token, tagName) { utils.expectToken(token, 'openTag', tagName); };
-utils.expectCloseTag = function(token, tagName) { utils.expectToken(token, 'closeTag', tagName); };
-
-utils.expectExpression = function(token, details, type) {
-    utils.expectToken(token, type || 'whiskersExpression');
 
     if (details instanceof Object) {
         _.each(details, function(value, key) {
             expect(token).to.have.property(key);
 
-            if (key === 'arguments') {
-                expect(token.arguments).to.have.length(value.length);
+            if (value instanceof Array) {
+                expect(value).to.have.length(value.length);
 
                 _.each(value, function(arg, index) {
-                    var tokenArg = token.arguments[index];
+                    var tokenArg = value[index];
 
                     if (arg.context) {
                         expect(tokenArg).to.have.property('context');
@@ -46,21 +31,23 @@ utils.expectExpression = function(token, details, type) {
             }
         });
     }
-};
+}
 
-utils.testExpression = function(expression, details) {
-    return function expressionTester(done) {
+utils.expectTokens = function(expression, details, debug) {
+    return function tokensExpector(done) {
         parser(expression, function(tokens) {
+            if (debug) console.log(tokens);
+
             if (details instanceof Array) {
                 expect(tokens.length).to.be.above(details.length - 1);
 
                 _.each(details, function(tokenDetails, index) {
                     var token = tokens[index];
 
-                    utils.expectExpression(token, tokenDetails, tokenDetails.type);
+                    utils.expectToken(token, tokenDetails);
                 });
             } else {
-                utils.expectExpression(tokens[0], details);
+                utils.expectToken(tokens[0], details);
             }
 
             done();

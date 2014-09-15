@@ -5,88 +5,59 @@ var utils = require('./utilities.js');
 
 describe('html tokenization', function() {
     describe('element', function() {
-        it('self-closing', function(done) {
-            parser('<br />', function(tokens) {
-                var openToken = tokens[0];
-                var closeToken = tokens[1];
+        it('self-closing', utils.expectTokens('<br />', [
+            { type: 'openTag', name: 'br' },
+            { type: 'closeTag', name: 'br' }
+        ]));
 
-                utils.expectOpenTag(openToken, 'br');
-                utils.expectCloseTag(closeToken, 'br');
+        it('opening and closing', utils.expectTokens('<p></p>', 
+            [
+                { type: 'openTag', name: 'p' },
+                { type: 'inElement' },
+                { type: 'closeTag', name: 'p' }
+            ]
+        ));
 
-                done();
-            });
-        });
-
-        it('opening and closing', function(done) {
-            parser('<p></p>', function(tokens) {
-                expect(tokens).to.have.length(3);
-
-                var openToken = tokens[0];
-                var inElementToken = tokens[1];
-                var closeToken = tokens[2];
-
-                utils.expectOpenTag(openToken, 'p');
-                utils.expectToken(inElementToken, 'inElement');
-                utils.expectCloseTag(closeToken, 'p');
-
-                done();
-            });
-        });
-
-        it('content', function(done) {
-            var text = 'lorem ipsum dolor sit amet';
-            parser('<p>' + text + '</p>', function(tokens) {
-                var textToken = tokens[2];
-
-                utils.expectToken(textToken, 'text');
-                expect(textToken.value).to.equal(text);
-
-                done();
-            });
-        });
+        it('content', utils.expectTokens('<p>lorem ipsum dolor sit amet</p>', 
+            [
+                { type: 'openTag', name: 'p' },
+                { type: 'inElement' },
+                { type: 'text', value: 'lorem ipsum dolor sit amet' },
+                { type: 'closeTag', name: 'p' }
+            ]
+        ));
 
         describe('nested', function() {
-            it('one-level', function(done) {
-                var nestedTagName = 'article';
-                parser('<section><' + nestedTagName + '></' + nestedTagName + '></section>', function(tokens) {
-                    var inFirstToken = tokens[1];
-                    var openToken = tokens[2];
-                    var closeToken = tokens[4];
-
-                    utils.expectToken(inFirstToken, 'inElement');
-
-                    utils.expectOpenTag(openToken, nestedTagName);
-                    utils.expectCloseTag(closeToken, nestedTagName);
-
-                    done();
-                });
-            });
+            it('one-level', utils.expectTokens('<section><article></article></section>', 
+                [
+                    { type: 'openTag', name: 'section' },
+                    { type: 'inElement' },
+                    { type: 'openTag', name: 'article' },
+                    { type: 'inElement' },
+                    { type: 'closeTag', name: 'article'},
+                    { type: 'closeTag', name: 'section' }
+                ]
+            ));
         });
 
         describe('attribute', function() {
-            it('empty', function(done) {
-                parser('<input readonly />', function(tokens) {
-                    var attributeToken = tokens[1];
+            it('empty', utils.expectTokens('<input readonly />', 
+                [
+                    { type: 'openTag', name: 'input' },
+                    { type: 'tagAttribute', name: 'readonly' },
+                    { type: 'closeTag', name: 'input' }
+                ]
+            ));
 
-                    expect(attributeToken, 'tagAttribute');
-                    expect(attributeToken.name).to.equal('readonly');
-                    expect(attributeToken).to.not.have.property('value');
-
-                    done();
-                });
-            });
-
-            it('valued', function(done) {
-                parser('<a href="/home">whiskers</a>', function(tokens) {
-                    var attributeToken = tokens[1];
-
-                    expect(attributeToken, 'tagAttribute');
-                    expect(attributeToken.name).to.equal('href');
-                    expect(attributeToken.value).to.equal('/home');
-
-                    done();
-                });
-            });
+            it('valued', utils.expectTokens('<a href="/home">whiskers</a>', 
+                [
+                    { type: 'openTag', name: 'a' },
+                    { type: 'tagAttribute', name: 'href', value: '/home' },
+                    { type: 'inElement' },
+                    { type: 'text', value: 'whiskers' },
+                    { type: 'closeTag', name: 'a' }
+                ]
+            ));
         });
     });
 });
