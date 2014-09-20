@@ -14,8 +14,6 @@ var fs = require('fs');
 var args = cli.args;
 var options = cli.options;
 
-console.log(args, options);
-
 if (args.length === 1) {
     var inputFile = args[0];
 
