@@ -1,16 +1,16 @@
 var expect = require('expect.js');
-var parser = require('../../lib/parser.js');
 
 var utils = require('./utilities.js');
+var expectTokens = utils.expectTokens;
 
 describe('html tokenization', function() {
     describe('element', function() {
-        it('self-closing', utils.expectTokens('<br />', [
+        it('self-closing', expectTokens('<br />', [
             { type: 'openTag', name: 'br' },
             { type: 'closeTag', name: 'br' }
         ]));
 
-        it('opening and closing', utils.expectTokens('<p></p>', 
+        it('opening and closing', expectTokens('<p></p>', 
             [
                 { type: 'openTag', name: 'p' },
                 { type: 'inElement' },
@@ -18,7 +18,7 @@ describe('html tokenization', function() {
             ]
         ));
 
-        it('content', utils.expectTokens('<p>lorem ipsum dolor sit amet</p>', 
+        it('content', expectTokens('<p>lorem ipsum dolor sit amet</p>', 
             [
                 { type: 'openTag', name: 'p' },
                 { type: 'inElement' },
@@ -28,7 +28,7 @@ describe('html tokenization', function() {
         ));
 
         describe('nested', function() {
-            it('one-level', utils.expectTokens('<section><article></article></section>', 
+            it('one-level', expectTokens('<section><article></article></section>', 
                 [
                     { type: 'openTag', name: 'section' },
                     { type: 'inElement' },
@@ -41,7 +41,7 @@ describe('html tokenization', function() {
         });
 
         describe('attribute', function() {
-            it('empty', utils.expectTokens('<input readonly />', 
+            it('empty', expectTokens('<input readonly />', 
                 [
                     { type: 'openTag', name: 'input' },
                     { type: 'tagAttribute', name: 'readonly' },
@@ -49,7 +49,7 @@ describe('html tokenization', function() {
                 ]
             ));
 
-            it('valued', utils.expectTokens('<a href="/home">whiskers</a>', 
+            it('valued', expectTokens('<a href="/home">whiskers</a>', 
                 [
                     { type: 'openTag', name: 'a' },
                     { type: 'tagAttribute', name: 'href', value: '/home' },

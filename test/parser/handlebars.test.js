@@ -1,8 +1,9 @@
 var utils = require('./utilities.js');
+var expectTokens = utils.expectTokens;
 
 describe('whiskers tokenization', function() {
     describe('expression', function() {
-        it('single argument', utils.expectTokens('{{test}}', 
+        it('single argument', expectTokens('{{test}}', 
             {
                 arguments: [
                     { value: 'test' }
@@ -10,7 +11,7 @@ describe('whiskers tokenization', function() {
             }
         ));
 
-        it('escaping', utils.expectTokens('{{{test}}}', 
+        it('escaping', expectTokens('{{{test}}}', 
             {
                 escaping: true,
                 arguments: [
@@ -19,7 +20,7 @@ describe('whiskers tokenization', function() {
             }
         ));
 
-        it('helper', utils.expectTokens('{{foo bar}}', 
+        it('helper', expectTokens('{{foo bar}}', 
             {
                 helperName: 'foo',
                 arguments: [
@@ -28,7 +29,7 @@ describe('whiskers tokenization', function() {
             }
         ));
 
-        it('multiple arguments', utils.expectTokens('{{foo bar test}}', 
+        it('multiple arguments', expectTokens('{{foo bar test}}', 
             {
                 arguments: [
                     { value: 'bar' },
@@ -37,7 +38,7 @@ describe('whiskers tokenization', function() {
             }
         ));
 
-        it('arguments with context', utils.expectTokens('{{bar this.test ../foo}}', 
+        it('arguments with context', expectTokens('{{bar this.test ../foo}}', 
             {
                 arguments: [
                     { context: 'this', value: 'test' },
@@ -48,7 +49,7 @@ describe('whiskers tokenization', function() {
     });
 
     describe('block', function() {
-        it('simple block', utils.expectTokens('{{#each}}{{/each}}', 
+        it('simple block', expectTokens('{{#each}}{{/each}}', 
             [
                 {
                     type: 'openWhiskersBlock',
@@ -61,7 +62,7 @@ describe('whiskers tokenization', function() {
             ]
         ));
 
-        it('inner expression', utils.expectTokens('{{#each}}{{foo.bar}}{{/each}}', 
+        it('inner expression', expectTokens('{{#each}}{{foo.bar}}{{/each}}', 
             [
                 {
                     type: 'openWhiskersBlock',
@@ -79,7 +80,7 @@ describe('whiskers tokenization', function() {
             ]
         ));
 
-        it('else block', utils.expectTokens('{{#each}}{{else}}{{/each}}', 
+        it('else block', expectTokens('{{#each}}{{else}}{{/each}}', 
             [
                 {
                     type: 'openWhiskersBlock',
@@ -95,7 +96,7 @@ describe('whiskers tokenization', function() {
             ]
         ));
 
-        it('handle loop variables', utils.expectTokens('{{#each}}{{@index}}{{/each}}', 
+        it('handle loop variables', expectTokens('{{#each}}{{@index}}{{/each}}', 
             [
                 {
                     type: 'openWhiskersBlock',
