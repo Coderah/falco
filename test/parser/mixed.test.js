@@ -47,10 +47,10 @@ describe('mixed tokenization', function() {
         ));
     });
 
-    xit('expression inside attribute', expectTokens('<p data-action="{{action}}">foobar</p>', 
+    it('expression inside attribute', expectTokens('<p data-action="{{action}}">foobar</p>', 
         [
             { type: 'openTag', name: 'p' },
-            { type: 'openAttribute', name: 'data-action' },
+            { type: 'attribute', name: 'data-action' },
             { type: 'inAttribute' },
             { type: 'whiskersExpression', arguments: [ { value: 'action' } ] },
             { type: 'closeAttribute', name: 'data-action' },

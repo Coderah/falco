@@ -44,7 +44,7 @@ describe('html tokenization', function() {
             it('empty', expectTokens('<input readonly />', 
                 [
                     { type: 'openTag', name: 'input' },
-                    { type: 'tagAttribute', name: 'readonly' },
+                    { type: 'attribute', name: 'readonly' },
                     { type: 'closeTag', name: 'input' }
                 ]
             ));
@@ -52,7 +52,10 @@ describe('html tokenization', function() {
             it('valued', expectTokens('<a href="/home">whiskers</a>', 
                 [
                     { type: 'openTag', name: 'a' },
-                    { type: 'tagAttribute', name: 'href', value: '/home' },
+                    { type: 'attribute', name: 'href' },
+                    { type: 'inAttribute' },
+                    { type: 'text', value: '/home' },
+                    { type: 'closeAttribute' },
                     { type: 'inElement' },
                     { type: 'text', value: 'whiskers' },
                     { type: 'closeTag', name: 'a' }
