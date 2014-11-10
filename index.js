@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 var Parser = require('./lib/parser.js');
 var cli = require('cli').enable('status', 'help');
 
@@ -6,6 +7,7 @@ cli.setUsage('whiskers FILE [OPTIONS]');
 cli.parse({
     out: ['o', 'output file path', 'path'],
     tokenOut: ['O', 'output for json file of tokens', 'path'],
+    dry: [undefined, 'dry parsing run (useful for validation)'],
     debug: [undefined, 'output debug info to console']
 });
 
@@ -19,7 +21,7 @@ if (args.length === 1) {
 
     fs.stat(inputFile, function(err, stats) {
         if (!stats || err) {
-            cli.error(inputFile + ' does not exist, aborting compile.');
+            cli.error('the file "' + inputFile + '" does not exist, aborting compile.');
         } else if (stats.isFile()) {
             return main(inputFile);
         } else if (stats.isDirectory()) {
@@ -43,6 +45,8 @@ function main(path) {
         if (options.debug) {
             console.log(utils.inspect(tokens, {depth: 5}));
         }
+
+        if (options.dry) process.exit(0);
 
         if (options.tokenOut) {
             fs.writeFileSync(options.tokenOut, JSON.stringify(tokens));
