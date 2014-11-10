@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "Whiskers is a lightweight and speedy Handlebars replacement that understands and rapidly updates the DOM, can be bound to existing elements and when paired with requestAnimationFrame dramatically increase binding update speeds.",
   "main": "index.js",
+  "bin": "./index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
