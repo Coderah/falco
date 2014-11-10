@@ -13,7 +13,7 @@ describe('html tokenization', function() {
         it('opening and closing', expectTokens('<p></p>', 
             [
                 { type: 'openTag', name: 'p' },
-                { type: 'inElement' },
+                { type: 'inTag' },
                 { type: 'closeTag', name: 'p' }
             ]
         ));
@@ -21,7 +21,7 @@ describe('html tokenization', function() {
         it('content', expectTokens('<p>lorem ipsum dolor sit amet</p>', 
             [
                 { type: 'openTag', name: 'p' },
-                { type: 'inElement' },
+                { type: 'inTag' },
                 { type: 'text', value: 'lorem ipsum dolor sit amet' },
                 { type: 'closeTag', name: 'p' }
             ]
@@ -31,9 +31,9 @@ describe('html tokenization', function() {
             it('one-level', expectTokens('<section><article></article></section>', 
                 [
                     { type: 'openTag', name: 'section' },
-                    { type: 'inElement' },
+                    { type: 'inTag' },
                     { type: 'openTag', name: 'article' },
-                    { type: 'inElement' },
+                    { type: 'inTag' },
                     { type: 'closeTag', name: 'article'},
                     { type: 'closeTag', name: 'section' }
                 ]
@@ -56,7 +56,7 @@ describe('html tokenization', function() {
                     { type: 'inAttribute' },
                     { type: 'text', value: '/home' },
                     { type: 'closeAttribute' },
-                    { type: 'inElement' },
+                    { type: 'inTag' },
                     { type: 'text', value: 'whiskers' },
                     { type: 'closeTag', name: 'a' }
                 ]

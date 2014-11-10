@@ -52,11 +52,11 @@ describe('whiskers tokenization', function() {
         it('simple block', expectTokens('{{#each}}{{/each}}', 
             [
                 {
-                    type: 'openWhiskersBlock',
+                    type: 'openExpressionBlock',
                     helperName: 'each'
                 },
                 {
-                    type: 'endWhiskersBlock',
+                    type: 'endExpressionBlock',
                     helperName: 'each'
                 }
             ]
@@ -65,7 +65,7 @@ describe('whiskers tokenization', function() {
         it('inner expression', expectTokens('{{#each}}{{foo.bar}}{{/each}}', 
             [
                 {
-                    type: 'openWhiskersBlock',
+                    type: 'openExpressionBlock',
                     helperName: 'each'
                 },
                 {
@@ -74,7 +74,7 @@ describe('whiskers tokenization', function() {
                     ]
                 },
                 {
-                    type: 'endWhiskersBlock',
+                    type: 'endExpressionBlock',
                     helperName: 'each'
                 }
             ]
@@ -83,14 +83,14 @@ describe('whiskers tokenization', function() {
         it('else block', expectTokens('{{#each}}{{else}}{{/each}}', 
             [
                 {
-                    type: 'openWhiskersBlock',
+                    type: 'openExpressionBlock',
                     helperName: 'each'
                 },
                 {
-                    type: 'whiskersBlockElse'
+                    type: 'elseExpression'
                 },
                 {
-                    type: 'endWhiskersBlock',
+                    type: 'endExpressionBlock',
                     helperName: 'each'
                 }
             ]
@@ -99,7 +99,7 @@ describe('whiskers tokenization', function() {
         it('handle loop variables', expectTokens('{{#each}}{{@index}}{{/each}}', 
             [
                 {
-                    type: 'openWhiskersBlock',
+                    type: 'openExpressionBlock',
                     helperName: 'each'
                 },
                 {
@@ -108,7 +108,7 @@ describe('whiskers tokenization', function() {
                     ]
                 },
                 {
-                    type: 'endWhiskersBlock',
+                    type: 'endExpressionBlock',
                     helperName: 'each'
                 }
             ]

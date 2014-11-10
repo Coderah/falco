@@ -9,8 +9,8 @@ describe('mixed tokenization', function() {
         it('as only content', expectTokens('<p>{{foobar}}</p>', 
             [
                 { type: 'openTag', name: 'p' },
-                { type: 'inElement' },
-                { type: 'whiskersExpression', arguments: [ { value: 'foobar' } ] },
+                { type: 'inTag' },
+                { type: 'expression', arguments: [ { value: 'foobar' } ] },
                 { type: 'closeTag', name: 'p' }
             ]
         ));
@@ -18,8 +18,8 @@ describe('mixed tokenization', function() {
         it('before text', expectTokens('<p>{{foobar}} test</p>', 
             [
                 { type: 'openTag', name: 'p' },
-                { type: 'inElement' },
-                { type: 'whiskersExpression', arguments: [ { value: 'foobar' } ] },
+                { type: 'inTag' },
+                { type: 'expression', arguments: [ { value: 'foobar' } ] },
                 { type: 'text', value: ' test' }, 
                 { type: 'closeTag', name: 'p' }
             ]
@@ -28,9 +28,9 @@ describe('mixed tokenization', function() {
         it('after text', expectTokens('<p>test {{foobar}}</p>', 
             [
                 { type: 'openTag', name: 'p' },
-                { type: 'inElement' },
+                { type: 'inTag' },
                 { type: 'text', value: 'test ' }, 
-                { type: 'whiskersExpression', arguments: [ { value: 'foobar' } ] },
+                { type: 'expression', arguments: [ { value: 'foobar' } ] },
                 { type: 'closeTag', name: 'p' }
             ]
         ));
@@ -38,9 +38,9 @@ describe('mixed tokenization', function() {
         it('in between text', expectTokens('<p>test {{foobar}} wins</p>', 
             [
                 { type: 'openTag', name: 'p' },
-                { type: 'inElement' },
+                { type: 'inTag' },
                 { type: 'text', value: 'test ' }, 
-                { type: 'whiskersExpression', arguments: [ { value: 'foobar' } ] },
+                { type: 'expression', arguments: [ { value: 'foobar' } ] },
                 { type: 'text', value: ' wins' },
                 { type: 'closeTag', name: 'p' }
             ]
@@ -52,9 +52,9 @@ describe('mixed tokenization', function() {
             { type: 'openTag', name: 'p' },
             { type: 'attribute', name: 'data-action' },
             { type: 'inAttribute' },
-            { type: 'whiskersExpression', arguments: [ { value: 'action' } ] },
+            { type: 'expression', arguments: [ { value: 'action' } ] },
             { type: 'closeAttribute', name: 'data-action' },
-            { type: 'inElement' },
+            { type: 'inTag' },
             { type: 'text', value: 'foobar' },
             { type: 'closeTag', name: 'p' }
         ]
