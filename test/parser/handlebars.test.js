@@ -1,7 +1,7 @@
 var utils = require('./utilities.js');
 var expectTokens = utils.expectTokens;
 
-describe('whiskers tokenization', function() {
+describe('falco tokenization', function() {
     describe('expression', function() {
         it('single argument', expectTokens('{{test}}', 
             {

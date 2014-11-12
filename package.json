@@ -1,7 +1,7 @@
 {
-  "name": "whiskers",
+  "name": "falco",
   "version": "0.0.0",
-  "description": "Whiskers is a lightweight and speedy Handlebars replacement that understands and rapidly updates the DOM, can be bound to existing elements and when paired with requestAnimationFrame dramatically increase binding update speeds.",
+  "description": "falco is a lightweight and speedy Handlebars replacement that understands and rapidly updates the DOM, can be bound to existing elements and when paired with requestAnimationFrame dramatically increase binding update speeds.",
   "main": "index.js",
   "bin": "./index.js",
   "scripts": {
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/Coderah/whiskers.git"
+    "url": "git://github.com/Coderah/falco.git"
   },
   "keywords": [
     "mustache",

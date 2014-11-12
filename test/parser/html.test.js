@@ -49,7 +49,7 @@ describe('html tokenization', function() {
                 ]
             ));
 
-            it('valued', expectTokens('<a href="/home">whiskers</a>', 
+            it('valued', expectTokens('<a href="/home">falco</a>', 
                 [
                     { type: 'openTag', name: 'a' },
                     { type: 'attribute', name: 'href' },
@@ -57,7 +57,7 @@ describe('html tokenization', function() {
                     { type: 'text', value: '/home' },
                     { type: 'closeAttribute' },
                     { type: 'inTag' },
-                    { type: 'text', value: 'whiskers' },
+                    { type: 'text', value: 'falco' },
                     { type: 'closeTag', name: 'a' }
                 ]
             ));

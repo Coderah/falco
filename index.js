@@ -2,7 +2,7 @@
 var Parser = require('./lib/parser.js');
 var cli = require('cli').enable('status', 'help');
 
-cli.setUsage('whiskers FILE [OPTIONS]');
+cli.setUsage('falco FILE [OPTIONS]');
 
 cli.parse({
     out: ['o', 'output file path', 'path'],
