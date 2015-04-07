@@ -1,112 +1,30 @@
-var whiskers = {
+var whiskers = (function () {
+    var uid = -1, cache = [];
 
-    bind: function(nodes, schema) {
-        var node = nodes.childNodes[0];
-        var deserializePatterns = {};
+    var whiskers = {};
 
-        function createPattern(schema, patterns) {
-            for (var i in schema) {
-                if (schema[i].hasOwnProperty('element') && schema[i].element instanceof Function) {
-                    var element = schema[i].element(nodes);
-                    if (element) {
-                        var pattern = Object.create(schema[i]);
-                        pattern.element = element;
-                        patterns[i] = pattern;
-                    }
-                } else {
-                    createPattern(schema[i], patterns[i] = {});
-                }
-            }
+    whiskers.cache = function(node) {
+        if (!node.nodeType) return Error('invalid node');
+
+        var elCacheId = node.attributes['data-cache-id'];
+
+        if (!elCacheId) {
+            uid++;
+            cache[uid] = {};
+
+            node.attributes['data-cache-id'] = uid;
         }
 
-        createPattern(schema, deserializePatterns);
-
-        node.update = whiskers.deserialize.bind(nodes, deserializePatterns);
-    },
-
-    deserialize: function(patterns, parameters) {
-        for (var i in parameters) {
-            var pattern = patterns[i];
-            if (pattern && pattern.hasOwnProperty('element') && pattern.element.nodeType) {
-                var parameter = parameters[i];
-                switch (pattern.type) {
-                    case 'class':
-                        var className = parameter,
-                            classList = pattern.element.classList;
-
-                        if (pattern.value && classList.contains(pattern.value)) {
-                            classList.remove(pattern.value);
-                        }
-
-                        if (!classList.contains(className)) {
-                            classList.add(className);
-                        }
-
-                        pattern.value = className;
-
-                        break;
-                    case 'textContent':
-                        var value = parameter;
-                        if (value) {
-                            pattern.element.textContent = parameter;
-                        }
-                        break;
-                }
-            } else if (patterns.hasOwnProperty(i)) {
-                whiskers.deserialize(patterns[i], parameters[i]);
-            }
-        }
-    }
-};
-
-var pageTemplate = (function () {
-    var fragment, elseFragment, schema;
-
-    var eachCommentsPartial = (function () {
-        var fragment, schema;
-        
-        var deserializePatternSchema = {
-
-        };
-
-        return function (parameters, options) {
-            if (!fragment) {
-                
-            }
-
-            if (!elseFragment) {
-
-            }
-        };
-    })();
-
-    var deserializePatternSchema = {
-        page: {
-            createdDate: { // section > article > small.meta
-                type: 'textContent',
-                element: function(targetEl) {
-                    var el = targetEl.querySelector('article>small');
-                    if (el) return el.childNodes[1];
-
-                    return false;
-                }
-            },
-            title: { // section > article > h1
-                type: 'textContent',
-                element: function(targetEl) {
-                    return targetEl.querySelector('article>h1');
-                }
-            },
-            type: {
-                type: 'class',
-                element: function(targetEl) {
-                    return targetEl.childNodes[0];
-                }
-            }
-        }
+        return cache[elCacheId || uid];
     };
 
-    return function (parameters, options) {
+    return whiskers;
+})(); 
+
+var pageTemplate = (function () {
+    var fragment;
+
+    var template = function (parameters, options) {
         if (!fragment) {
             fragment = document.createDocumentFragment();
 
@@ -144,14 +62,50 @@ var pageTemplate = (function () {
             fragment.appendChild(section);
         }
 
-        var nodes = fragment.cloneNode(true);
+        var nodes = this.nodes = fragment.cloneNode(true);
 
-        whiskers.bind(nodes, deserializePatternSchema);
+        this.bound = {
+            createdDate: nodes.childNodes[0].querySelector('article>small').childNodes[1],
+            title: nodes.childNodes[0].querySelector('article>h1'),
+            type: nodes.childNodes[0].childNodes[0]
+        };
 
         if (parameters) {
-            nodes.childNodes[0].update(parameters);
+            this.update(parameters);
         }
 
-        return nodes.childNodes[0];
+        return this;
     };
+
+    template.prototype.update = function(parameters) {
+        if (!parameters) return;
+
+        if (parameters.page) {
+            if (parameters.page.createdDate) {
+                this.bound.createdDate.textContent = parameters.page.createdDate;
+            }
+
+            if (parameters.page.title) {
+                this.bound.title.textContent = parameters.page.title;
+            }
+
+            if (parameters.page.type) {
+                var cache = whiskers.cache(this.bound.type);
+                var oldValue = cache.typeValue;
+                var classList = this.bound.type.classList;
+
+                if (classList.contains(oldValue)) {
+                    classList.remove(oldValue);
+                }
+
+                if (!classList.contains(parameters.page.type)) {
+                    classList.add(parameters.page.type);
+                }
+
+                cache.typeValue = parameters.page.type;
+            }
+        }
+    }
+
+    return template;
 })();
