@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-var Parser = require('./lib/parser.js');
+var Parser = require('./lib/parser');
+var JSONTransform = require('./lib/parser/json-transform.js');
 var cli = require('cli').enable('status', 'help');
 
 cli.setUsage('falco FILE [OPTIONS]');
@@ -36,20 +37,32 @@ if (args.length === 1) {
 
 var utils = require('util');
 function main(path) {
-    var contents = fs.readFileSync(path).toString();
+    var tokenStream = new Parser();
+    fs.createReadStream(path).pipe(tokenStream);
 
-    cli.spinner('Parsing...');
-    Parser(contents, function(tokens) {
-        cli.spinner('Parsing... Done\n', true);
+    if (options.debug) {
+        tokenStream.pipe(new JSONTransform()).pipe(process.stdout);
+    } else {
+        cli.spinner('Parsing...');
+    }
 
-        if (options.debug) {
-            console.log(utils.inspect(tokens, {depth: 5}));
-        }
+    if (options.dry) return;
 
-        if (options.dry) process.exit(0);
+    // tokenStream.on('end', function() {
+    //     cli.spinner('Parsing... Done\n', true);
+    // });
 
-        if (options.tokenOut) {
-            fs.writeFileSync(options.tokenOut, JSON.stringify(tokens));
-        }
-    });
+    // Parser(contents, function(tokens) {
+    //     cli.spinner('Parsing... Done\n', true);
+
+    //     if (options.debug) {
+    //         console.log(utils.inspect(tokens, {depth: 5}));
+    //     }
+
+    //     if (options.dry) process.exit(0);
+
+    //     if (options.tokenOut) {
+    //         fs.writeFileSync(options.tokenOut, JSON.stringify(tokens));
+    //     }
+    // });
 }
