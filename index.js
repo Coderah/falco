@@ -2,6 +2,7 @@
 var Parser = require('./lib/parser');
 var JSONTransform = require('./lib/parser/json-transform.js');
 var Transpiler = require('./lib/transpiler');
+var path = require('path');
 var cli = require('cli').enable('status', 'help');
 
 cli.setUsage('falco FILE [OPTIONS]');
@@ -15,11 +16,8 @@ cli.parse({
 
 var fs = require('fs');
 
-var args = cli.args;
-var options = cli.options;
-
-if (args.length === 1) {
-    var inputFile = args[0];
+if (cli.args.length === 1) {
+    var inputFile = cli.args[0];
 
     fs.stat(inputFile, function(err, stats) {
         if (!stats || err) {
@@ -37,40 +35,30 @@ if (args.length === 1) {
 }
 
 var utils = require('util');
-function main(path) {
+function main(templatePath) {
     var tokenStream = new Parser();
-    fs.createReadStream(path).pipe(tokenStream);
+    fs.createReadStream(templatePath).pipe(tokenStream);
 
-    if (options.debug) {
+    if (cli.options.debug) {
         tokenStream.pipe(new JSONTransform()).pipe(process.stdout);
     } else {
-        cli.spinner('Parsing...');
+        cli.spinner('');
     }
 
-    if (options.dry) return;
+    if (cli.options.dry) return;
 
     var transpiler = new Transpiler();
     tokenStream.pipe(transpiler);
 
-    if (options.debug) {
+    if (cli.options.debug) {
         transpiler.pipe(process.stdout);
     }
 
-    // tokenStream.on('end', function() {
-    //     cli.spinner('Parsing... Done\n', true);
-    // });
+    if (cli.options.out) {
+        transpiler.pipe(fs.createWriteStream(path.resolve(cli.options.out)));
+    }
 
-    // Parser(contents, function(tokens) {
-    //     cli.spinner('Parsing... Done\n', true);
-
-    //     if (options.debug) {
-    //         console.log(utils.inspect(tokens, {depth: 5}));
-    //     }
-
-    //     if (options.dry) process.exit(0);
-
-    //     if (options.tokenOut) {
-    //         fs.writeFileSync(options.tokenOut, JSON.stringify(tokens));
-    //     }
-    // });
+    tokenStream.on('end', function() {
+        cli.spinner('', true);
+    });
 }
