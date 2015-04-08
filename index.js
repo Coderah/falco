@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 var Parser = require('./lib/parser');
 var JSONTransform = require('./lib/parser/json-transform.js');
+var Transpiler = require('./lib/transpiler');
 var cli = require('cli').enable('status', 'help');
 
 cli.setUsage('falco FILE [OPTIONS]');
@@ -47,6 +48,13 @@ function main(path) {
     }
 
     if (options.dry) return;
+
+    var transpiler = new Transpiler();
+    tokenStream.pipe(transpiler);
+
+    if (options.debug) {
+        transpiler.pipe(process.stdout);
+    }
 
     // tokenStream.on('end', function() {
     //     cli.spinner('Parsing... Done\n', true);
