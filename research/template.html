@@ -10,15 +10,15 @@
 </section>
 <!-- TODO: write template code for if and each -->
 <section class="comments">
-    {{#each comments}}
-    <article>
-        <h2>{{@index}} - {{title}}</h2>
-        <small class="meta">{{username}} posted on {{createdDate}}</small>
-        <p>{{content}}</p>
-    </article>
+    {{#each page.comments}}
+        <article>
+            <h2>{{@index}} - {{title}}</h2>
+            <small class="meta">{{username}} posted on {{createdDate}}</small>
+            <p>{{content}}</p>
+        </article>
     {{else}}
-    <article class="message">
-        <p>Be the first to comment</p>
-    </article>
+        <article class="message">
+            <p>Be the first to comment</p>
+        </article>
     {{/each}}
 </section>

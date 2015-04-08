@@ -14,16 +14,35 @@
 </head>
 <body>
     <script type="text/javascript" src="template.js"></script>
+    <script src="data.js"></script>
     <script type="text/javascript">
-        var page = new pageTemplate({
-            page: {
-                title: 'real blog post article thingy!',
-                type: 'blog-post',
-                createdDate: new Date()
+        function buildPage() {
+            return data[parseInt(Math.random() * data.length)];
+        }
+
+        var pages = [];
+
+        var pageCount = 10;
+
+        for (var i = 0; i < pageCount; i++) {
+            pages.push(new PageTemplate());
+        }
+
+        requestAnimationFrame(function() {
+            for (var i = 0; i < pages.length; i++) {
+                pages[i].appendTo(document.body);
             }
         });
+
+        function randomUpdate() {
+            for (var i = 0; i < pages.length; i++) {
+                pages[i].update(buildPage());
+            }
+
+            // requestAnimationFrame(randomUpdate);
+        }
         
-        document.body.appendChild(page.nodes);
+        requestAnimationFrame(randomUpdate);
     </script>
 </body>
 </html>
