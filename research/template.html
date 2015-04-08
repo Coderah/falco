@@ -7,15 +7,15 @@
         <p>Fugit, nostrum, consequatur consequuntur saepe sint qui iusto corporis eaque iste quibusdam.</p>
         <p>Provident, nulla, repellat nesciunt similique quibusdam dolor architecto delectus earum unde culpa ea minima!</p>
     </article>
-    
+
     {{#each page.comments}}
-    <article class="comments">
+    <article class="comment">
         <h2>{{@index}} - {{title}}</h2>
         <small class="meta">{{username}} posted on {{createdDate}}</small>
         <p>{{content}}</p>
     </article>
     {{else}}
-    <article class="message">
+    <article class="comments-message">
         <p>Be the first to comment</p>
     </article>
     {{/each}}

@@ -9,6 +9,7 @@ var PageTemplate = (function () {
                 fragment = document.createDocumentFragment();
 
                 var article = document.createElement('article');
+                article.classList.add('comment');
 
                 var h2IndexTitle = document.createElement('h2');
                 h2IndexTitle.appendChild(document.createTextNode('')); // @index
@@ -133,8 +134,8 @@ var PageTemplate = (function () {
                         for (var i = 1; i < parameters.page.comments.length; i++) {
                             var node = this.nodes[i];
 
-                            if (!node.parentElement || node.parentElement !== this.nodes[0].parentElement) {
-                                whiskers.insertAfter(node, this.nodes[0]);
+                            if (!node.parentElement || node.parentElement !== this.nodes[i].parentElement) {
+                                whiskers.insertAfter(node, this.nodes[i-1].parentElement ? this.nodes[i-1] : this.nodes[0]);
                             }
                         }
                     }
@@ -189,20 +190,14 @@ var PageTemplate = (function () {
             }
 
             fragment.appendChild(section);
-
-            var commentsSection = document.createElement('section');
-            commentsSection.classList.add('comments');
-
-            fragment.appendChild(commentsSection);
         }
-
 
         var nodes = this.nodes = whiskers.nodeListToArray(document.importNode(fragment, true).childNodes);
 
         this.bind();
 
         this.eachComments = new CommentsPartial(parameters);
-        this.eachComments.appendTo(this.nodes[1]);
+        this.eachComments.appendTo(this.nodes[0]);
 
         if (parameters) {
             this.update(parameters, options);
