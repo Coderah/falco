@@ -6,15 +6,25 @@
     <style>
         section {
             max-width: 960px;
+            margin: 0 auto;
+            background-color: #FEFEFE;
+            border-radius: 3px;
+            box-shadow: 0px 2px 3px 1px rgba(50,50,50, 0.1);
+            padding: 20px;
         }
         section.comments {
-            border-top:solid 1px #E7E7E7;
+            margin-bottom: 30px;
+            border-top:solid 1px #ECECEC;
+        }
+
+        section {
         }
     </style>
 </head>
 <body>
+    <script type="text/javascript" src="whiskers.js"></script>
     <script type="text/javascript" src="template.js"></script>
-    <script src="data.js"></script>
+    <script type="text/javascript" src="data.js"></script>
     <script type="text/javascript">
         function buildPage() {
             return data[parseInt(Math.random() * data.length)];

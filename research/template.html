@@ -7,18 +7,16 @@
         <p>Fugit, nostrum, consequatur consequuntur saepe sint qui iusto corporis eaque iste quibusdam.</p>
         <p>Provident, nulla, repellat nesciunt similique quibusdam dolor architecto delectus earum unde culpa ea minima!</p>
     </article>
-</section>
-<!-- TODO: write template code for if and each -->
-<section class="comments">
+    
     {{#each page.comments}}
-        <article>
-            <h2>{{@index}} - {{title}}</h2>
-            <small class="meta">{{username}} posted on {{createdDate}}</small>
-            <p>{{content}}</p>
-        </article>
+    <article class="comments">
+        <h2>{{@index}} - {{title}}</h2>
+        <small class="meta">{{username}} posted on {{createdDate}}</small>
+        <p>{{content}}</p>
+    </article>
     {{else}}
-        <article class="message">
-            <p>Be the first to comment</p>
-        </article>
+    <article class="message">
+        <p>Be the first to comment</p>
+    </article>
     {{/each}}
 </section>
