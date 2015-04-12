@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 var Parser = require('./lib/parser');
 var JSONTransform = require('./lib/parser/json-transform.js');
-var Transpiler = require('./lib/transpiler');
+var transpiler = require('./lib/transpiler');
 var path = require('path');
 var cli = require('cli').enable('status', 'help');
 
@@ -47,15 +47,15 @@ function main(templatePath) {
 
     if (cli.options.dry) return;
 
-    var transpiler = new Transpiler();
-    tokenStream.pipe(transpiler);
+    var translator = new transpiler.Translator();
+    tokenStream.pipe(translator);
 
     if (cli.options.debug) {
-        transpiler.pipe(process.stdout);
+        translator.pipe(process.stdout);
     }
 
     if (cli.options.out) {
-        transpiler.pipe(fs.createWriteStream(path.resolve(cli.options.out)));
+        translator.pipe(fs.createWriteStream(path.resolve(cli.options.out)));
     }
 
     tokenStream.on('end', function() {
